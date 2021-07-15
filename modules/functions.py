@@ -69,26 +69,37 @@ def get_obsid_list(startdate=None,enddate=None):
     return obsid_list
 
 
-def get_obsid_dirs(startdate=None,enddate=None):
+def get_obsid_beam_dir(obsid,beam,mode='happili-01'):
     """
-    Get a ??? of obsid directories.
-    Optional start and end date
+    Get directory path for obsid + beam
+    Default assumes happili-01 setup / access to 02-04
+    Can also run in happili-05 mode where everything is local
 
     Parameters
     ----------
-    startdate : int (optional)
-         Optional startdate in YYMMDD format
-    enddate : int (optional)
-         Optional enddate in YYMMDD format
+    obsid : str
+         Obsid provided as a string
+    beam : int
+         beam provided as an int
 
     Returns
     -------
-    obsid_dirs : ????
-        ???? of obsid directories (/data?/apertif/ObsID)
+    obsid_beam_dir : str
+        path to obsid / beam
     """
 
-    pass
-
+    if mode == 'happili-05':
+        obsid_beam_dir = '/data/apertif/{0}/{1:02d}'.format(obsid,beam)
+    else:
+        #if not happili-05 mode, default to happili-01 mode
+        if beam < 10:
+            obsid_beam_dir = '/data/apertif/{0}/{1:02d}'.format(obsid,beam)
+        elif beam < 20:
+            obsid_beam_dir = '/data2/apertif/{0}/{1:02d}'.format(obsid,beam)
+        elif beam < 30:
+            obsid_beam_dir = '/data3/apertif/{0}/{1:02d}'.format(obsid,beam)
+        else:
+            obsid_beam_dir = '/data4/apertif/{0}/{1:02d}'.format(obsid,beam)
 
 def get_scal_intermediate_dirs():
     pass
