@@ -33,8 +33,8 @@ def get_obsid_list(startdate=None,enddate=None):
 
     Returns
     -------
-    obsid_list : list
-         List of obsids
+    obsid_array : array
+         Array of obsids as strings
     """
     #do as full ObsID directory to start
     taskdirlist = glob.glob(
@@ -43,6 +43,9 @@ def get_obsid_list(startdate=None,enddate=None):
     taskdirlist.sort()
     #take only the ObsID part
     obsid_list = [x[-9:] for x in taskdirlist]
+    #create arrays, more useful later
+    obsid_array = np.array(obsid_list)
+    obsid_int_array = np.array(obsid_list,dtype=int)
 
     #now check for date range
     if startdate is not None:
@@ -50,15 +53,13 @@ def get_obsid_list(startdate=None,enddate=None):
         #so can do numerical comparison
         startid_str = startdate + '000'
         startid = np.int(startid_str)
-        #put obsid_list into ints for numeric comparison
-        obsid_int_list = [int(x) for x in obsid_list]
         #find indices of sources that comes after startid
         ind_start = np.where(obsid_int_list > startid)[0]
         if len(ind_start) == 0:
             print('Start date comes after last obs. Starting from first obs')
         else:
             #keep obs that comes after start
-            obsid_list = obsid_list[ind_start]
+            obsid_array = obsid_array[ind_start][0]
     #and repeat for enddate
     if enddate is not None:
         endid_str = enddate + '999'
@@ -69,9 +70,9 @@ def get_obsid_list(startdate=None,enddate=None):
             print('End date comes before first obs. Going to last obs')
         else:
             #keep obs that comes after start
-            obsid_list = obsid_list[ind_end]
+            obsid_array = obsid_array[ind_end]
     
-    return obsid_list
+    return obsid_array
 
 
 def get_obsid_beam_dir(obsid,beam,mode='happili-01'):
