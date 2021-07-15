@@ -106,5 +106,7 @@ def get_obsid_beam_dir(obsid,beam,mode='happili-01'):
         else:
             obsid_beam_dir = '/data4/apertif/{0}/{1:02d}'.format(obsid,beam)
 
+    return obsid_beam_dir
+
 def get_scal_intermediate_dirs():
     pass
