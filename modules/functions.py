@@ -16,6 +16,7 @@ Main things to address / think about:
 import numpy as np
 import os
 import glob
+import shutil
 
 
 def get_obsid_array(startdate=None,enddate=None):
@@ -187,7 +188,7 @@ def delete_intermediate_scal_dirs(startdate=None,enddate=None,
 
     Different mode for happili-01 vs happili-05
 
-    Defaults to a verbose running, but no actualy
+    Defaults to a verbose running, but not actually doing
 
     Parameters
     ----------
@@ -198,8 +199,23 @@ def delete_intermediate_scal_dirs(startdate=None,enddate=None,
     mode : string
         Running mode - happili-01 or happili-05
         Default is happili-01
+    run : Boolean
+        Actually run and do deletion?
+        Default is False
+    verbose : Boolean
+        Print a record of what is (to be) deleted?
+        Default is True
+    """
+    #first get directories for deletion
+    
+    scal_dir_list = get_scal_intermediate_dirs(startdate=startdate,
+                                               enddate=enddate,
+                                               mode=mode)
 
-    Returns
-    -------
-    scal_dir_list : list
-         List of all interm
+    #then iterate through each directory
+    #print statement and delete, as set by flags
+    for scdir in scal_dir_list:
+        if verbose is True:
+            print('Deleting {}'.format(scdir))
+        if run is True:
+            shutil.rmtree(scdir)
