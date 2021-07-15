@@ -155,6 +155,8 @@ def get_scal_intermediate_dirs(startdate=None,enddate=None,
     for beamdir in obs_beam_dir_list:
         major_selfcal_list = glob.glob(
             os.path.join(beamdir,"selfcal/0[0-9]"))
+        #need to sort into order
+        major_selfcal_list.sort()
         #check length of list
         #want to exclude first and last, so list needs
         #to be at least three elements long
@@ -167,3 +169,37 @@ def get_scal_intermediate_dirs(startdate=None,enddate=None,
 
 
     return selfcal_dir_list
+
+
+def delete_intermediate_scal_dirs(startdate=None,enddate=None,
+                                  mode='happili-01',
+                                  run=False,
+                                  verbose=True):
+    """
+    Delete the intermediate selfcal directories
+
+    Optionally do this for a range of dates
+    Intermediate selfcal directories are everything in
+    /data/apertif/ObsID/BB/selfcal/01-0N, where N 
+    is the second to last major cycle of selfcal.
+    Thus, this keeps the initial starting point
+    and final major cycle of self-calibration
+
+    Different mode for happili-01 vs happili-05
+
+    Defaults to a verbose running, but no actualy
+
+    Parameters
+    ----------
+    startdate : str (optional)
+         Optional startdate in YYMMDD format
+    enddate : str (optional)
+         Optional enddate in YYMMDD format
+    mode : string
+        Running mode - happili-01 or happili-05
+        Default is happili-01
+
+    Returns
+    -------
+    scal_dir_list : list
+         List of all interm
