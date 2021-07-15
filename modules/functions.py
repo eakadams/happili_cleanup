@@ -215,7 +215,11 @@ def delete_intermediate_scal_dirs(startdate=None,enddate=None,
     #then iterate through each directory
     #print statement and delete, as set by flags
     for scdir in scal_dir_list:
-        if verbose is True:
-            print('Deleting {}'.format(scdir))
         if run is True:
             shutil.rmtree(scdir)
+            if verbose is True:
+                print('Deleting {}'.format(scdir))
+        else:
+            if verbose is True:
+                print('Practice run only; deleting {}'.format(scdir))
+                
