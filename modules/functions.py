@@ -19,9 +19,9 @@ import os
 import glob
 import datetime as dt
 
-def get_obsid_list(startdate=None,enddate=None):
+def get_obsid_array(startdate=None,enddate=None):
     """
-    Get list of obsids on happili node
+    Get array of obsids on happili node
     Optionally between startdate and enddate
 
     Parameters
@@ -54,7 +54,7 @@ def get_obsid_list(startdate=None,enddate=None):
         startid_str = startdate + '000'
         startid = np.int(startid_str)
         #find indices of sources that comes after startid
-        ind_start = np.where(obsid_int_list > startid)[0]
+        ind_start = np.where(obsid_int_array > startid)[0]
         if len(ind_start) == 0:
             print('Start date comes after last obs. Starting from first obs')
         else:
@@ -64,8 +64,7 @@ def get_obsid_list(startdate=None,enddate=None):
     if enddate is not None:
         endid_str = enddate + '999'
         endid = np.int(endid_str)
-        obsid_int_list = [int(x) for x in obsid_list]
-        ind_end = np.where(obsid_int_list < endid)[0]
+        ind_end = np.where(obsid_int_array < endid)[0]
         if len(ind_end) == 0:
             print('End date comes before first obs. Going to last obs')
         else:
