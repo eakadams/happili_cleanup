@@ -13,11 +13,10 @@ Main things to address / think about:
 - Listing user usage, to more easily contact people
 """
 
-from astropy.io import ascii
 import numpy as np
 import os
 import glob
-import datetime as dt
+
 
 def get_obsid_array(startdate=None,enddate=None):
     """
@@ -86,6 +85,9 @@ def get_obsid_beam_dir(obsid,beam,mode='happili-01'):
          Obsid provided as a string
     beam : int
          beam provided as an int
+    mode : string
+        Running mode - happili-01 or happili-05
+        Default is happili-01
 
     Returns
     -------
@@ -108,5 +110,60 @@ def get_obsid_beam_dir(obsid,beam,mode='happili-01'):
 
     return obsid_beam_dir
 
-def get_scal_intermediate_dirs():
-    pass
+def get_scal_intermediate_dirs(startdate=None,enddate=None,
+                               mode='happili-01'):
+    """
+    Get the intermediate selfcal directories
+
+    Optionally do this for a range of dates
+    Intermediate selfcal directories are everything in
+    /data/apertif/ObsID/BB/selfcal/01-0N, where N 
+    is the second to last major cycle of selfcal.
+    Thus, this keeps the initial starting point
+    and final major cycle of self-calibration
+
+    Different mode for happili-01 vs happili-05
+
+    Parameters
+    ----------
+    startdate : str (optional)
+         Optional startdate in YYMMDD format
+    enddate : str (optional)
+         Optional enddate in YYMMDD format
+    mode : string
+        Running mode - happili-01 or happili-05
+        Default is happili-01
+
+    Returns
+    -------
+    scal_dir_list : list
+         List of all intermediate selfcal directories in date range
+    """
+
+    #first get obsid array
+    obsid_array = get_obsid_array(startdate=startdate,enddate=enddate)
+
+    #then get initial path for each beam / obsid combination
+    obs_beam_dir_list = []
+    for obsid in obsid_array:
+        for b in range(40):
+            obdir = get_obsid_beam_dir(obsid,b,mode=mode)
+            obs_beam_dir_list.append(obdir)
+
+    #then need to find selfcal directories
+    selfcal_dir_list = []
+    for beamdir in obs_beam_dir_list:
+        major_selfcal_list = glob.glob(
+            os.path.join(beamdir,"selfcal/0[0-9]"))
+        #check length of list
+        #want to exclude first and last, so list needs
+        #to be at least three elements long
+        if len(major_selfcal_list) > 2:
+            #slice out all the middle elements
+            intermediate_selfcal_list = major_selfcal_list[1:-1]
+            #append to list, but avoid nesting
+            for scdir in intermediate_selfcal_list:
+                selfcal_dir_list.append(scdir)
+
+
+    return selfcal_dir_list
