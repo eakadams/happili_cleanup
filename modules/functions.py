@@ -17,6 +17,7 @@ from astropy.io import ascii
 import numpy as np
 import os
 import glob
+import datetime as dt
 
 def get_obsid_list(startdate=None,enddate=None):
     """
@@ -45,26 +46,30 @@ def get_obsid_list(startdate=None,enddate=None):
 
     #now check for date range
     if startdate is not None:
-        #get indices where startdate is in obsid
-        ind_start = [i for i, s in enumerate(obsis_list) if startdate in s]
-        #check that start date overlaps
-        #if not, print a warning
+        #put startdate into taskid format
+        #so can do numerical comparison
+        startid_str = startdate + '000'
+        startid = np.int(startid_str)
+        #put obsid_list into ints for numeric comparison
+        obsid_int_list = [int(x) for x in obsid_list]
+        #find indices of sources that comes after startid
+        ind_start = np.where(obsid_int_list > startid)[0]
         if len(ind_start) == 0:
-            print('Start date not in ObsID list. Starting from first obs')
+            print('Start date comes after last obs. Starting from first obs')
         else:
-            #start from first index in ind_start.
-            #sorted by obsid, so this works
-            obsid_list = obsid_list[ind_start[0]:]
+            #keep obs that comes after start
+            obsid_list = obsid_list[ind_start]
     #and repeat for enddate
     if enddate is not None:
-        ind_end = [i for i, s in enumerate(obsis_list) if enddate in s]
+        endid_str = enddate + '999'
+        endid = np.int(endid_str)
+        obsid_int_list = [int(x) for x in obsid_list]
+        ind_end = np.where(obsid_int_list < endid)[0]
         if len(ind_end) == 0:
-            print('End date not in ObsID list. Going to last obs')
+            print('End date comes before first obs. Going to last obs')
         else:
-            #take last index in ind_end
-            #remember exclusive
-            last_ind = ind_end[-1]+1
-            obsid_list = obsid_list[:last_ind]
+            #keep obs that comes after start
+            obsid_list = obsid_list[ind_end]
     
     return obsid_list
 
