@@ -221,9 +221,15 @@ def delete_intermediate_scal_dirs(startdate=None,enddate=None,
     #print statement and delete, as set by flags
     for scdir in scal_dir_list:
         if run is True:
-            shutil.rmtree(scdir)
-            if verbose is True:
-                print('Deleting {}'.format(scdir))
+            #do a try/except
+            #because may not have permisison to delete data
+            try:
+                shutil.rmtree(scdir)
+                if verbose is True:
+                    print('Deleting {}'.format(scdir))
+            except:
+                if verbose is True:
+                    print('Unable to delete {}'.format(scdir))
         else:
             if verbose is True:
                 print('Practice run only; deleting {}'.format(scdir))
