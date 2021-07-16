@@ -59,7 +59,10 @@ def get_obsid_array(startdate=None,enddate=None):
             print('Start date comes after last obs. Starting from first obs')
         else:
             #keep obs that comes after start
+            #do for both arrays, since one is returned
+            #and the other is used in next call
             obsid_array = obsid_array[ind_start]
+            obsid_int_array = obsid_int_array[ind_start]
     #and repeat for enddate
     if enddate is not None:
         endid_str = enddate + '999'
@@ -68,8 +71,10 @@ def get_obsid_array(startdate=None,enddate=None):
         if len(ind_end) == 0:
             print('End date comes before first obs. Going to last obs')
         else:
-            #keep obs that comes after start
+            #keep obs only before end
             obsid_array = obsid_array[ind_end]
+            #for completeness, int array also
+            obsid_int_array = obsid_int_array[ind_end]
     
     return obsid_array
 
