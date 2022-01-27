@@ -164,11 +164,11 @@ def get_scal_intermediate_dirs(startdate=None,enddate=None,
         #need to sort into order
         major_selfcal_list.sort()
         #check length of list
-        #want to exclude first and last, so list needs
-        #to be at least three elements long
-        if len(major_selfcal_list) > 2:
-            #slice out all the middle elements
-            intermediate_selfcal_list = major_selfcal_list[1:-1]
+        #updating to only keep last directory,
+        #so list needs to be at least two elements long
+        if len(major_selfcal_list) > 1:
+            #slice out everything except last element
+            intermediate_selfcal_list = major_selfcal_list[0:-1]
             #append to list, but avoid nesting
             for scdir in intermediate_selfcal_list:
                 selfcal_dir_list.append(scdir)
@@ -186,10 +186,11 @@ def delete_intermediate_scal_dirs(startdate=None,enddate=None,
 
     Optionally do this for a range of dates
     Intermediate selfcal directories are everything in
-    /data/apertif/ObsID/BB/selfcal/01-0N, where N 
+    /data/apertif/ObsID/BB/selfcal/00-0N, where N 
     is the second to last major cycle of selfcal.
-    Thus, this keeps the initial starting point
-    and final major cycle of self-calibration
+    Thus, this keeps the
+    final major cycle of self-calibration
+    That will be cleaned up separately as the model should be saved
 
     Different mode for happili-01 vs happili-05
 
