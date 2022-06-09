@@ -292,7 +292,7 @@ def get_continuum_intermediates(startdate=None,enddate=None,
         # Get all beam_ files excluding _mf_
         beam_file_list = find_patter_remove_mf(beamdir,"continuum/beam_*", 'beam_mf_')
         # Get all image_ files excluding _mf_
-        image_file_list = find_patter_remove_mf(beamdir,"continuum/beam_*", 'image_mf_')
+        image_file_list = find_patter_remove_mf(beamdir,"continuum/image_*", 'image_mf_')
         # Get all residual_ files excluding _mf_
         residual_file_list = find_patter_remove_mf(beamdir,"continuum/residual_*", 'residual_mf_')
         # Get Raw 3C**.MS files
