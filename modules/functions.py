@@ -314,7 +314,7 @@ def get_continuum_intermediates(startdate=None,enddate=None,
         # Concatenate to relevant lists
         tar_list += mask_file_list + model_file_list
 
-        delete_list += beam_file_list + image_file_list + residual_file_list + residual_mf_list + image_mf_files
+        delete_list += beam_file_list + image_file_list + residual_file_list + residual_mf_list + image_mf_files + residual_mf_files + cms_file_list
 
 
     # Make sure no tar files are part of any of these lists -> should be redundant but just in case
