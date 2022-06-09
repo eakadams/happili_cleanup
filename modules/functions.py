@@ -286,8 +286,7 @@ def get_continuum_intermediates(startdate=None,enddate=None,
 
     tar_list = []
     delete_list = []
-    #then need to find selfcal directories
-    selfcal_dir_list = []
+
     for beamdir in obs_beam_dir_list: 
         # TODO: Check that the below patterns are correct
         # Get all beam_ files excluding _mf_
