@@ -296,6 +296,8 @@ def get_continuum_intermediates(startdate=None,enddate=None,
         image_file_list = find_patter_remove_mf(beamdir,"continuum/beam_*", 'image_mf_')
         # Get all residual_ files excluding _mf_
         residual_file_list = find_patter_remove_mf(beamdir,"continuum/residual_*", 'residual_mf_')
+        # Get Raw 3C**.MS files
+        cms_file_list = find_patter_remove_mf(beamdir,"raw/3C**.MS", None)
 
         # Assuming we want to tar all TODO: Check
         # Get all mask_ files
@@ -368,7 +370,7 @@ def pop_tar(file_list):
     """Safety function to make sure no tar files get deleted"""
 
     for file in file_list:
-        if file.endswith('.tar'):
+        if file.endswith('.tar') or file.endswith('.gz'):
             file_list.remove(file)
     return file_list
 
@@ -497,7 +499,3 @@ def delete_continuum_intermediates(startdate=None,enddate=None,
             if verbose is True:
                 print('Practice run only; deleting {}'.format(scdir))
 
-
-
-
-# TODO: Add a thing to delete  the 3C**.MS files
