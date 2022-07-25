@@ -368,77 +368,83 @@ def final_scal_cleanup(startdate=None, enddate=None,
                 obs_beam_dir_list.append(obdir)
     # now iterate through
     for beamdir in obs_beam_dir_list:
-        major_selfcal_list = glob.glob(
-            os.path.join(beamdir, "selfcal/0[0-9]"))
-        # need to sort into order
-        major_selfcal_list.sort()
-        last_scal = major_selfcal_list[-1]
-        amp_scal = os.path.join(beamdir, "selfcal/amp")
+        # roughly check whether or not I hve run this based on presence of pm dir
+        # skip if already run
         pm_scal = os.path.join(beamdir, "selfcal/pm")
-        # first delete parametric; easiest
-        if run is True:
-            try:
-                shutil.rmtree(pm_scal)
+        if os.path.isdir(pm_scal):
+            major_selfcal_list = glob.glob(
+                os.path.join(beamdir, "selfcal/0[0-9]"))
+            # need to sort into order
+            major_selfcal_list.sort()
+            last_scal = major_selfcal_list[-1]
+            amp_scal = os.path.join(beamdir, "selfcal/amp")
+            # first delete parametric; easiest
+            if run is True:
+                try:
+                    shutil.rmtree(pm_scal)
+                    if verbose is True:
+                        print('Deleting {}'.format(pm_scal))
+                except:
+                    if verbose is True:
+                        print('Unable to delete {}'.format(pm_scal))
+            else:
                 if verbose is True:
-                    print('Deleting {}'.format(pm_scal))
-            except:
+                    print('Practice run only; deleting {}'.format(pm_scal))
+            # then do last major cycle
+            major_models = glob.glob(os.path.join(last_scal, 'model_*'))
+            major_models.sort()
+            last_model = major_models[-1]
+            last_scal_contents = glob.glob(last_scal + "/*")
+            amp_models = glob.glob(os.path.join(amp_scal, 'model_*'))
+            amp_models.sort()
+            last_amp_model = amp_models[-1]
+            last_amp_contents = glob.glob(amp_scal+"/*")
+            if run is True:
+                try:
+                    # gztar phse model
+                    shutil.make_archive(last_model, 'gztar', last_model)
+                    if verbose is True:
+                        print('gztar last phase selfcal model, {}'.format(last_model))
+                    # then clean up
+                    for scdir in last_scal_contents:
+                        try:
+                            shutil.rmtree(scdir)
+                            if verbose is True:
+                                print('Deleting {}'.format(scdir))
+                        except:
+                            if verbose is True:
+                                print('Unable to delete {}'.format(scdir))
+                except:
+                    if verbose is True:
+                        print('Unable to gztar last phase selfcal model, {}'.format(last_model))
+                try:
+                    # gztar amp
+                    shutil.make_archive(last_amp_model, 'gztar', last_amp_model)
+                    if verbose is True:
+                        print('gztar last amp selfcal model, {}'.format(last_amp_model))
+                    # then clean up
+                    for scdir in last_amp_contents:
+                        try:
+                            shutil.rmtree(scdir)
+                            if verbose is True:
+                                print('Deleting {}'.format(scdir))
+                        except:
+                            if verbose is True:
+                                print('Unable to delete {}'.format(scdir))
+                except:
+                    if verbose is True:
+                        print('Unable to gztar last amp selfcal model, {}'.format(last_amp_model))
+            else:
                 if verbose is True:
-                    print('Unable to delete {}'.format(pm_scal))
+                    print('Practice run only; gztar last phase selfcal model, {}'.format(last_model))
+                    for scdir in last_scal_contents:
+                        print('Practice run only; deleting {}'.format(scdir))
+                    print('Practice run only; gztar last amp selfcal model, {}'.format(last_amp_model))
+                    for scdir in last_amp_contents:
+                        print('Practice run only; deleting {}'.format(scdir))
         else:
             if verbose is True:
-                print('Practice run only; deleting {}'.format(pm_scal))
-        # then do last major cycle
-        major_models = glob.glob(os.path.join(last_scal, 'model_*'))
-        major_models.sort()
-        last_model = major_models[-1]
-        last_scal_contents = glob.glob(last_scal + "/*")
-        amp_models = glob.glob(os.path.join(amp_scal, 'model_*'))
-        amp_models.sort()
-        last_amp_model = amp_models[-1]
-        last_amp_contents = glob.glob(amp_scal+"/*")
-        if run is True:
-            try:
-                # gztar phse model
-                shutil.make_archive(last_model, 'gztar', last_model)
-                if verbose is True:
-                    print('gztar last phase selfcal model, {}'.format(last_model))
-                # then clean up
-                for scdir in last_scal_contents:
-                    try:
-                        shutil.rmtree(scdir)
-                        if verbose is True:
-                            print('Deleting {}'.format(scdir))
-                    except:
-                        if verbose is True:
-                            print('Unable to delete {}'.format(scdir))
-            except:
-                if verbose is True:
-                    print('Unable to gztar last phase selfcal model, {}'.format(last_model))
-            try:
-                # gztar amp
-                shutil.make_archive(last_amp_model, 'gztar', last_amp_model)
-                if verbose is True:
-                    print('gztar last amp selfcal model, {}'.format(last_amp_model))
-                # then clean up
-                for scdir in last_amp_contents:
-                    try:
-                        shutil.rmtree(scdir)
-                        if verbose is True:
-                            print('Deleting {}'.format(scdir))
-                    except:
-                        if verbose is True:
-                            print('Unable to delete {}'.format(scdir))
-            except:
-                if verbose is True:
-                    print('Unable to gztar last amp selfcal model, {}'.format(last_amp_model))
-        else:
-            if verbose is True:
-                print('Practice run only; gztar last phase selfcal model, {}'.format(last_model))
-                for scdir in last_scal_contents:
-                    print('Practice run only; deleting {}'.format(scdir))
-                print('Practice run only; gztar last amp selfcal model, {}'.format(last_amp_model))
-                for scdir in last_amp_contents:
-                    print('Practice run only; deleting {}'.format(scdir))
+                print('Parametric selfcal directory already removed; skipping cleanup for {}'.format(beamdir))
 
 
 def get_continuum_intermediates(startdate=None, enddate=None,
@@ -513,11 +519,9 @@ def get_continuum_intermediates(startdate=None, enddate=None,
             mask = os.path.join(beamdir, "continuum/mask_{}".format(pattern))
             model = os.path.join(beamdir, "continuum/model_{}".format(pattern))
             residual = os.path.join(beamdir, "continuum/residual_{}".format(pattern))
-            print(residual)
             if os.path.isdir(mask): mask_zip_list.append(mask)
             if os.path.isdir(model): model_zip_list.append(model)
             if os.path.isdir(residual): residual_keep_list.append(residual)
-        print(residual_keep_list)
         # Find all models, masks and residuals which are not in zip/keep list
         # Do this by listing all and then checking against zip_list and keep_list
         # start with models
@@ -535,11 +539,8 @@ def get_continuum_intermediates(startdate=None, enddate=None,
         # now residuals
         residual_del_list = glob.glob(os.path.join(beamdir, "continuum/residual_*_0[0-9]"))
         residual_del_list.sort()
-        print(residual_del_list)
         for residual in residual_keep_list:
-            print(residual)
             if residual in residual_del_list:
-                print("saving {}".format(residual))
                 residual_del_list.remove(residual)
 
         # join everything w/ zip & delete list
