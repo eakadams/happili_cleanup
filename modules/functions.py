@@ -494,9 +494,9 @@ def get_continuum_intermediates(startdate=None, enddate=None,
     zip_list = []
     for beamdir in obs_beam_dir_list:
         # get all dirty beams
-        beam_list = glob.glob(os.path.join(beamdir, "continuum/beam*"))
+        beam_list = glob.glob(os.path.join(beamdir, "continuum/beam*_0[0-9]"))
         # get all first dirty images (maps)
-        map_list = glob.glob(os.path.join(beamdir, "continuum/map*"))
+        map_list = glob.glob(os.path.join(beamdir, "continuum/map*_0[0-9]"))
         # get images that aren't fits
         image_list = glob.glob(os.path.join(beamdir, "continuum/image_*_0[0-9]"))
         # Find NN to save; this if for mf plus chunks
@@ -517,19 +517,19 @@ def get_continuum_intermediates(startdate=None, enddate=None,
         # Find all models, masks and residuals which are not in zip/keep list
         # Do this by listing all and then checking against zip_list and keep_list
         # start with models
-        model_del_list = glob.glob(os.path.join(beamdir, "continuum/model_*"))
+        model_del_list = glob.glob(os.path.join(beamdir, "continuum/model_*_0[0-9]"))
         model_del_list.sort()
         for model in model_del_list:
             if model in model_zip_list:
                 model_del_list.remove(model)
         # now masks
-        mask_del_list = glob.glob(os.path.join(beamdir, "continuum/mask_*"))
+        mask_del_list = glob.glob(os.path.join(beamdir, "continuum/mask_*_0[0-9]"))
         mask_del_list.sort()
         for mask in mask_del_list:
             if mask in mask_zip_list:
                 mask_del_list.remove(mask)
         # now residuals
-        residual_del_list = glob.glob(os.path.join(beamdir, "continuum/residual_*"))
+        residual_del_list = glob.glob(os.path.join(beamdir, "continuum/residual_*_0[0-9]"))
         residual_del_list.sort()
         for residual in residual_del_list:
             if residual in residual_keep_list:
