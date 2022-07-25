@@ -152,7 +152,6 @@ def get_cal_vis(startdate=None, enddate=None, mode='happili-01'):
             obdir = get_obsid_beam_dir(obsid, b, mode=mode)
             if os.path.isdir(obdir):
                 obs_beam_dir_list.append(obdir)
-            obs_beam_dir_list.append(obdir)
 
     # then need to find selfcal directories
     cal_vis_list = []
@@ -255,7 +254,6 @@ def get_scal_intermediate_dirs(startdate=None, enddate=None,
             obdir = get_obsid_beam_dir(obsid,b,mode=mode)
             if os.path.isdir(obdir):
                 obs_beam_dir_list.append(obdir)
-            obs_beam_dir_list.append(obdir)
 
     # then need to find selfcal directories
     selfcal_dir_list = []
@@ -488,7 +486,6 @@ def get_continuum_intermediates(startdate=None, enddate=None,
             obdir = get_obsid_beam_dir(obsid, b, mode=mode)
             if os.path.isdir(obdir):
                 obs_beam_dir_list.append(obdir)
-            obs_beam_dir_list.append(obdir)
 
     del_list = []
     zip_list = []
