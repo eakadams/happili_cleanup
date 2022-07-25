@@ -40,7 +40,7 @@ if args.scal_inter is True:
                                   mode=args.mode,
                                   run=args.run,
                                   verbose=args.verbose)
-    cleanup_continuum_intermediates(stardate=args.startdate,
+    cleanup_continuum_intermediates(startdate=args.startdate,
                                     enddate=args.enddate,
                                     mode=args.mode,
                                     run=args.run,
