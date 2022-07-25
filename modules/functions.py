@@ -150,6 +150,8 @@ def get_cal_vis(startdate=None, enddate=None, mode='happili-01'):
     for obsid in obsid_array:
         for b in range(40):
             obdir = get_obsid_beam_dir(obsid, b, mode=mode)
+            if os.path.isdir(obdir):
+                obs_beam_dir_list.append(obdir)
             obs_beam_dir_list.append(obdir)
 
     # then need to find selfcal directories
@@ -251,6 +253,8 @@ def get_scal_intermediate_dirs(startdate=None, enddate=None,
     for obsid in obsid_array:
         for b in range(40):
             obdir = get_obsid_beam_dir(obsid,b,mode=mode)
+            if os.path.isdir(obdir):
+                obs_beam_dir_list.append(obdir)
             obs_beam_dir_list.append(obdir)
 
     # then need to find selfcal directories
@@ -360,8 +364,10 @@ def final_scal_cleanup(startdate=None, enddate=None,
     obs_beam_dir_list = []
     for obsid in obsid_array:
         for b in range(40):
-            obdir = get_obsid_beam_dir(obsid,b,mode=mode)
-            obs_beam_dir_list.append(obdir)
+            obdir = get_obsid_beam_dir(obsid, b, mode=mode)
+            # test if beam exists before appending it
+            if os.path.isdir(obdir):
+                obs_beam_dir_list.append(obdir)
     # now iterate through
     for beamdir in obs_beam_dir_list:
         major_selfcal_list = glob.glob(
@@ -434,12 +440,6 @@ def final_scal_cleanup(startdate=None, enddate=None,
                     print('Practice run only; deleting {}'.format(scdir))
 
 
-
-
-
-
-
-
 def get_continuum_intermediates(startdate=None, enddate=None,
                                 mode='happili-01'):
     """
@@ -483,6 +483,8 @@ def get_continuum_intermediates(startdate=None, enddate=None,
     for obsid in obsid_array:
         for b in range(40):
             obdir = get_obsid_beam_dir(obsid, b, mode=mode)
+            if os.path.isdir(obdir):
+                obs_beam_dir_list.append(obdir)
             obs_beam_dir_list.append(obdir)
 
     del_list = []
