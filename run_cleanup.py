@@ -12,9 +12,10 @@ But would have the potential to be expanded for other cleanup,
 e.g., raw calibrator files
 """
 
+import argparse
 from modules.functions import delete_intermediate_scal_dirs
 from modules.functions import cleanup_continuum_intermediates
-import argparse
+from modules.functions import delete_cal_vis
 
 parser = argparse.ArgumentParser(
     description='Clean up Apercal data products on happili')
@@ -45,5 +46,7 @@ if args.scal_inter is True:
                                     mode=args.mode,
                                     run=args.run,
                                     verbose=args.verbose)
+    delete_cal_vis(startdate=args.startdate, enddate=args.enddate, mode=args.mode,
+                   run=args.run, verbose=args.verbose)
 
 
