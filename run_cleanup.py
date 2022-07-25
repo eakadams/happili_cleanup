@@ -29,7 +29,7 @@ parser.add_argument("--verbose", default=True, type=bool,
                     help='Verbose printing of file deletion')
 parser.add_argument("--run", default=False, type=bool,
                     help='Whether to actually run deletion')
-args=parser.parse_args()
+args = parser.parse_args()
 
 print(args)
 
@@ -39,5 +39,10 @@ if args.scal_inter is True:
                                   mode=args.mode,
                                   run=args.run,
                                   verbose=args.verbose)
+    cleanup_continuum_intermediates(stardate=args.startdate,
+                                    enddate=args.enddate,
+                                    mode=args.mode,
+                                    run=args.run,
+                                    verbose=args.verbose)
 
 
