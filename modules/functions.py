@@ -523,21 +523,22 @@ def get_continuum_intermediates(startdate=None, enddate=None,
         # start with models
         model_del_list = glob.glob(os.path.join(beamdir, "continuum/model_*_0[0-9]"))
         model_del_list.sort()
-        for model in model_del_list:
-            if model in model_zip_list:
+        for model in model_zip_list:
+            if model in model_del_list:
                 model_del_list.remove(model)
         # now masks
         mask_del_list = glob.glob(os.path.join(beamdir, "continuum/mask_*_0[0-9]"))
         mask_del_list.sort()
-        for mask in mask_del_list:
-            if mask in mask_zip_list:
+        for mask in mask_zip_list:
+            if mask in mask_del_list:
                 mask_del_list.remove(mask)
         # now residuals
         residual_del_list = glob.glob(os.path.join(beamdir, "continuum/residual_*_0[0-9]"))
         residual_del_list.sort()
-        for residual in residual_del_list:
+        print(residual_del_list)
+        for residual in residual_keep_list:
             print(residual)
-            if residual in residual_keep_list:
+            if residual in residual_del_list:
                 print("saving {}".format(residual))
                 residual_del_list.remove(residual)
 
