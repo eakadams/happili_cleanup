@@ -13,6 +13,7 @@ e.g., raw calibrator files
 """
 
 from modules.functions import delete_intermediate_scal_dirs
+from modules.functions import cleanup_continuum_intermediates
 import argparse
 
 parser = argparse.ArgumentParser(
