@@ -498,7 +498,7 @@ def get_continuum_intermediates(startdate=None, enddate=None,
         # get all first dirty images (maps)
         map_list = glob.glob(os.path.join(beamdir, "continuum/map*"))
         # get images that aren't fits
-        image_list = glob.glob(os.path.join(beamdir, "continuum/image_0[0-9]"))
+        image_list = glob.glob(os.path.join(beamdir, "continuum/image_*_0[0-9]"))
         # Find NN to save; this if for mf plus chunks
         # do this by looking at the saved fits images
         fits_list = glob.glob(os.path.join(beamdir, "continuum/image_*fits"))
