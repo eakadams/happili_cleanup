@@ -332,55 +332,6 @@ def get_continuum_intermediates(startdate=None, enddate=None,
     return zip_list, del_list
 
 
-def find_pattern_remove_mf(directory, pattern_to_find, pattern_to_remove):
-    """
-    Helper function for get_continuum_intermediates
-    Grabs all files of name pattern pattern in directory using glob
-    and then removes all files with name pattern pattern_to_remove using list comp
-    """
-    # get list of files
-    file_list = glob.glob(os.path.join(directory, pattern_to_find))
-    # remove files with pattern_to_remove
-    if pattern_to_remove is not None:
-        file_list = [x for x in file_list if pattern_to_remove not in x]
-    return file_list
-
-
-def grab_mf_keep_largest(beamdir, pattern,filetype_to_keep='.fits'):
-    """
-    Helper function for get_continuum_intermediates
-    Grabs all mf files but the one with the largest NN
-    
-    beamdir : str
-        ---> Path to beam directory
-    pattern: str
-        ---> Pattern from beam directory i.e. continuum/residual_mf_*
-    filetype_to_keep : str
-        ---> If we only want to keep .fits files we use the default value if we want to keep miriad files this function needs to be expanded
-    """
-    # All above are without _mf_ files, to only keep the largest of the _mf_ files we filter all mf files with the same method as above and append all but the largest
-
-    mf_list = find_patter_remove_mf(beamdir,pattern, None)
-    # Sorts according to number in the file name
-    sorted_mf_list = sorted(mf_list, key=lambda x: int(x.split('_')[-1].split('.')[0]))
-    # TODO: Check if we want to keep the miriad files or not
-    # to keep the fits file and not the miriad file, we iterate over the array in reverse as the largest number should be last, we check that it is indeed a fits file and then break, if it not but is say a .fits.pybdsf... or miriad file we skip over it and check the next one
-    for i in range(len(sorted_mf_list)): #TODO: Also do we want to keep log files?
-        if sorted_mf_list[-i].endswith(filetype_to_keep):
-            sorted_mf_list.pop(-i) # This is an inplace operation
-            break
-    # After this loop finishes the only files present in the list will be the _mf_ files with lower NNs than the largest, note that this will delete all files if there is no fits file TODO: Check that this is acceptable behavior
-    return sorted_mf_list
-
-def pop_tar(file_list):
-    """Safety function to make sure no tar files get deleted"""
-
-    for file in file_list:
-        if file.endswith('.tar') or file.endswith('.gz'):
-            file_list.remove(file)
-    return file_list
-
-
 def delete_continuum_intermediates(startdate=None,enddate=None,
                                   mode='happili-01',
                                   run=False,
