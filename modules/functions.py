@@ -18,6 +18,7 @@ import os
 import glob
 import shutil
 import tarfile
+import re
 
 
 def get_obsid_array(startdate=None, enddate=None):
@@ -161,7 +162,7 @@ def get_scal_intermediate_dirs(startdate=None, enddate=None,
     selfcal_dir_list = []
     for beamdir in obs_beam_dir_list:
         major_selfcal_list = glob.glob(
-            os.path.join(beamdir,"selfcal/0[0-9]"))
+            os.path.join(beamdir, "selfcal/0[0-9]"))
         # need to sort into order
         major_selfcal_list.sort()
         # check length of list
@@ -236,24 +237,22 @@ def delete_intermediate_scal_dirs(startdate=None, enddate=None,
                 print('Practice run only; deleting {}'.format(scdir))
                 
 
-def get_continuum_intermediates(startdate=None,enddate=None,
-                               mode='happili-01'):
+def get_continuum_intermediates(startdate=None, enddate=None,
+                                mode='happili-01'):
     """
     Get the intermediate continuum files ::: Bones copied from get_scal_intermediate_dirs
 
-    This will select all files of the form image_mf_NN.fits residual_mf_NN with the highest NN for keeping and put up the rest for deletion. It will also select files of the form masks_* and models_* to be tarred and then deleted.
+    This will select all files of the form image_mf_NN.fits and residual_mf_NN that do not have the highest NN,
+    so that they can be later deleted.
+    This selects the model and mask of the highest NN to be later zipped (and original deleted).
+    Beam images are also selected as intermediate product to be removed.
 
-    TODO: Change text below
     Optionally do this for a range of dates
-    Intermediate selfcal directories are everything in
-    /data/apertif/ObsID/BB/selfcal/01-0N, where N 
-    is the second to last major cycle of selfcal.
-    Thus, this keeps the initial starting point
-    and final major cycle of self-calibration
 
     Different mode for happili-01 vs happili-05
 
-    This will return two lists one for compression masks_* and models_*, and one for files to be deleted which is all but the final output
+    This will return two lists: one for compression of masks_* and models_*,
+    and one for files to be deleted which is all but the final output
 
     Parameters
     ----------
@@ -267,72 +266,81 @@ def get_continuum_intermediates(startdate=None,enddate=None,
 
     Returns
     -------
-    tar_list : list (str)
-        List of files to be tarred
+    zip_list : list (str)
+        List of files to be compressed
     del_list : list (str)
         List of files to be deleted
     """
 
-    #first get obsid array
-    obsid_array = get_obsid_array(startdate=startdate,enddate=enddate)
+    # first get obsid array
+    obsid_array = get_obsid_array(startdate=startdate, enddate=enddate)
 
-    #then get initial path for each beam / obsid combination
+    # then get initial path for each beam / obsid combination
     obs_beam_dir_list = []
     for obsid in obsid_array:
         for b in range(40):
-            obdir = get_obsid_beam_dir(obsid,b,mode=mode)
+            obdir = get_obsid_beam_dir(obsid, b, mode=mode)
             obs_beam_dir_list.append(obdir)
 
-    tar_list = []
-    delete_list = []
+    del_list = []
+    zip_list = []
+    for beamdir in obs_beam_dir_list:
+        # get all dirty beams
+        beam_list = glob.glob(os.path.join(beamdir, "continuum/beam*"))
+        # get all first dirty images (maps)
+        map_list = glob.glob(os.path.join(beamdir, "continuum/map*"))
+        # Find NN to save; this if for mf plus chunks
+        # do this by looking at the saved fits images
+        fits_list = glob.glob(os.path.join(beamdir, "continuum/image_*fits"))
+        fits_list.sort()
+        # now iterate through patterns for each saved image
+        # setup lists to hold things
+        model_zip_list = []
+        mask_zip_list = []
+        residual_keep_list = []
+        for image in fits_list:
+            pattern = re.search('image_(.+?).fits', image).group(1)
+            # now add the relevant things with that pattern to the right lists
+            mask_zip_list.append(os.path.join(beamdir, "continuum/mask_" + pattern))
+            model_zip_list.append(os.path.join(beamdir, "continuum/model_" + pattern))
+            residual_keep_list.append(os.path.join(beamdir, "continuum/residual_" + pattern))
+        # Find all models, masks and residuals which are not in zip/keep list
+        # Do this by listing all and then checking against zip_list and keep_list
+        # start with models
+        model_del_list = glob.glob(os.path.join(beamdir, "continuum/model_*"))
+        model_del_list.sort()
+        for model in model_del_list:
+            if model in model_zip_list:
+                model_del_list.remove(model)
+        # now masks
+        mask_del_list = glob.glob(os.path.join(beamdir, "continuum/mask_*"))
+        mask_del_list.sort()
+        for mask in mask_del_list:
+            if mask in mask_zip_list:
+                mask_del_list.remove(mask)
+        # now residuals
+        residual_del_list = glob.glob(os.path.join(beamdir, "continuum/residual_*"))
+        residual_del_list.sort()
+        for residual in residual_del_list:
+            if residual in residual_keep_list:
+                residual_del_list.remove(residual)
 
-    for beamdir in obs_beam_dir_list: 
-        # TODO: Check that the below patterns are correct
-        # Get all beam_ files excluding _mf_
-        beam_file_list = find_patter_remove_mf(beamdir,"continuum/beam_*", 'beam_mf_')
-        # Get all image_ files excluding _mf_
-        image_file_list = find_patter_remove_mf(beamdir,"continuum/image_*", 'image_mf_')
-        # Get all residual_ files excluding _mf_
-        residual_file_list = find_patter_remove_mf(beamdir,"continuum/residual_*", 'residual_mf_')
-        # Get Raw 3C**.MS files
-        cms_file_list = find_patter_remove_mf(beamdir,"raw/3C**.MS", None)
+        # join everything w/ zip & delete list
+        zip_list = zip_list + mask_zip_list + model_zip_list
+        del_list = del_list + mask_del_list + model_del_list + residual_del_list
 
-        # Assuming we want to tar all TODO: Check
-        # Get all mask_ files
-        mask_file_list = find_patter_remove_mf(beamdir,"continuum/mask_*", None)
-        # Get all model_ files
-        model_file_list = find_patter_remove_mf(beamdir,"continuum/model_*", None)
+    return zip_list, del_list
 
 
-        # Grab non final mf files
-        residual_mf_files = grab_mf_keep_largest(beamdir, "continuum/residual_mf_*")
-
-        image_mf_files = grab_mf_keep_largest(beamdir, "continuum/image_mf_*")
-
-        
-        # Concatenate to relevant lists
-        tar_list += mask_file_list + model_file_list
-
-        delete_list += beam_file_list + image_file_list + residual_file_list + residual_mf_list + image_mf_files + residual_mf_files + cms_file_list
-
-
-    # Make sure no tar files are part of any of these lists -> should be redundant but just in case
-    tar_list = pop_tar(tar_list)
-
-    delete_list = pop_tar(delete_list)
-
-    return tar_list, delete_list
-
-
-def find_patter_remove_mf(directory, pattern_to_find,pattern_to_remove):
+def find_pattern_remove_mf(directory, pattern_to_find, pattern_to_remove):
     """
     Helper function for get_continuum_intermediates
     Grabs all files of name pattern pattern in directory using glob
     and then removes all files with name pattern pattern_to_remove using list comp
     """
-    #get list of files
-    file_list = glob.glob(os.path.join(directory,pattern_to_find))
-    #remove files with pattern_to_remove
+    # get list of files
+    file_list = glob.glob(os.path.join(directory, pattern_to_find))
+    # remove files with pattern_to_remove
     if pattern_to_remove is not None:
         file_list = [x for x in file_list if pattern_to_remove not in x]
     return file_list
