@@ -493,6 +493,7 @@ def get_continuum_intermediates(startdate=None, enddate=None,
     del_list = []
     zip_list = []
     for beamdir in obs_beam_dir_list:
+        print(beamdir)
         # get all dirty beams
         beam_list = glob.glob(os.path.join(beamdir, "continuum/beam*_0[0-9]"))
         # get all first dirty images (maps)
@@ -535,6 +536,7 @@ def get_continuum_intermediates(startdate=None, enddate=None,
         for residual in residual_del_list:
             if residual in residual_keep_list:
                 residual_del_list.remove(residual)
+        print(residual_del_list)
 
         # join everything w/ zip & delete list
         zip_list = zip_list + mask_zip_list + model_zip_list
