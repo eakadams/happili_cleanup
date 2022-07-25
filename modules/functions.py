@@ -444,7 +444,7 @@ def final_scal_cleanup(startdate=None, enddate=None,
 def get_continuum_intermediates(startdate=None, enddate=None,
                                 mode='happili-01'):
     """
-    Get the intermediate continuum files ::: Bones copied from get_scal_intermediate_dirs
+    Get the intermediate continuum files
 
     This will select all files of the form image_mf_NN.fits and residual_mf_NN that do not have the highest NN,
     so that they can be later deleted.
@@ -499,21 +499,25 @@ def get_continuum_intermediates(startdate=None, enddate=None,
         image_list = glob.glob(os.path.join(beamdir, "continuum/image_*_0[0-9]"))
         # Find NN to save; this if for mf plus chunks
         # do this by looking at the saved fits images
-        fits_list = glob.glob(os.path.join(beamdir, "continuum/image_*fits"))
-        fits_list.sort()
-        print(fits_list)
+        fits_image_list = glob.glob(os.path.join(beamdir, "continuum/image_*fits"))
+        fits_image_list.sort()
         # now iterate through patterns for each saved image
         # setup lists to hold things
         model_zip_list = []
         mask_zip_list = []
         residual_keep_list = []
-        for image in fits_list:
+        for image in fits_image_list:
             pattern = re.search('image_(.+?).fits', image).group(1)
-            print(pattern)
             # now add the relevant things with that pattern to the right lists
-            mask_zip_list.append(os.path.join(beamdir, "continuum/mask_" + pattern))
-            model_zip_list.append(os.path.join(beamdir, "continuum/model_" + pattern))
-            residual_keep_list.append(os.path.join(beamdir, "continuum/residual_" + pattern))
+            # make sure they exist first
+            mask = os.path.join(beamdir, "continuum/mask_{}".format(pattern))
+            model = os.path.join(beamdir, "continuum/model_{}".format(pattern))
+            residual = os.path.join(beamdir, "continuum/residual_{}".format(pattern))
+            print(residual)
+            if os.path.isdir(mask): mask_zip_list.append(mask)
+            if os.path.isdir(model): model_zip_list.append(model)
+            if os.path.isdir(residual): residual_keep_list.append(residual)
+
         # Find all models, masks and residuals which are not in zip/keep list
         # Do this by listing all and then checking against zip_list and keep_list
         # start with models
@@ -529,13 +533,11 @@ def get_continuum_intermediates(startdate=None, enddate=None,
             if mask in mask_zip_list:
                 mask_del_list.remove(mask)
         # now residuals
-        print(residual_keep_list)
         residual_del_list = glob.glob(os.path.join(beamdir, "continuum/residual_*_0[0-9]"))
         residual_del_list.sort()
         for residual in residual_del_list:
             if residual in residual_keep_list:
                 residual_del_list.remove(residual)
-        print(residual_del_list)
 
         # join everything w/ zip & delete list
         zip_list = zip_list + mask_zip_list + model_zip_list
@@ -579,28 +581,13 @@ def cleanup_continuum_intermediates(startdate=None, enddate=None,
         Print a record of what is (to be) deleted?
         Default is True
     """
-    # first get files for deletion and zipping
-    
-    zip_list, del_list = get_continuum_intermediates(startdate=startdate, enddate=enddate,
-                                                     mode=mode)
+    # first get files for deletion and zipping, plus writing to fits
+    zip_list, del_list = get_continuum_intermediates(startdate=startdate, enddate=enddate, mode=mode)
 
-    # then iterate through each file
+    # then iterate through each list
+    # start with zip and fits, to avoid accidental deletion
+    # but also clean those up as you go
     # print statement and delete, as set by flags
-    for contdir in del_list:
-        if run is True:
-            # do a try/except
-            # because may not have permission to delete data
-            try:
-                shutil.rmtree(contdir)
-                if verbose is True:
-                    print('Deleting {}'.format(contdir))
-            except:
-                if verbose is True:
-                    print('Unable to delete {}'.format(contdir))
-        else:
-            if verbose is True:
-                print('Practice run only; deleting {}'.format(contdir))
-
     # zip the directories to keep
     for contdir in zip_list:
         if run is True:
@@ -624,6 +611,22 @@ def cleanup_continuum_intermediates(startdate=None, enddate=None,
         else:
             if verbose is True:
                 print('practice run only; gztar and then try to clean up {}'.format(contdir))
+    for contdir in del_list:
+        if run is True:
+            # do a try/except
+            # because may not have permission to delete data
+            try:
+                shutil.rmtree(contdir)
+                if verbose is True:
+                    print('Deleting {}'.format(contdir))
+            except:
+                if verbose is True:
+                    print('Unable to delete {}'.format(contdir))
+        else:
+            if verbose is True:
+                print('Practice run only; deleting {}'.format(contdir))
+
+
 
 
 
