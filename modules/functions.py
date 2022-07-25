@@ -587,7 +587,7 @@ def cleanup_continuum_intermediates(startdate=None, enddate=None,
             # do a try/except
             # because may not have permission to delete data
             try:
-                os.rm(contdir)
+                shutil.rmtree(contdir)
                 if verbose is True:
                     print('Deleting {}'.format(contdir))
             except:
@@ -612,7 +612,7 @@ def cleanup_continuum_intermediates(startdate=None, enddate=None,
             # then clean up files if they are zipped/tarred
             if os.path.exists(contdir+'.tar.gz'):
                 try:
-                    os.rm(contdir)
+                    shutil.rmtree(contdir)
                     print('gztar file exists, clean up original directory {}'.format(contdir))
                 except:
                     if verbose is True:
