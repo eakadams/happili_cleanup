@@ -501,6 +501,7 @@ def get_continuum_intermediates(startdate=None, enddate=None,
         # do this by looking at the saved fits images
         fits_list = glob.glob(os.path.join(beamdir, "continuum/image_*fits"))
         fits_list.sort()
+        print(fits_list)
         # now iterate through patterns for each saved image
         # setup lists to hold things
         model_zip_list = []
@@ -508,6 +509,7 @@ def get_continuum_intermediates(startdate=None, enddate=None,
         residual_keep_list = []
         for image in fits_list:
             pattern = re.search('image_(.+?).fits', image).group(1)
+            print(pattern)
             # now add the relevant things with that pattern to the right lists
             mask_zip_list.append(os.path.join(beamdir, "continuum/mask_" + pattern))
             model_zip_list.append(os.path.join(beamdir, "continuum/model_" + pattern))
