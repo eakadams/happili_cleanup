@@ -517,7 +517,7 @@ def get_continuum_intermediates(startdate=None, enddate=None,
             if os.path.isdir(mask): mask_zip_list.append(mask)
             if os.path.isdir(model): model_zip_list.append(model)
             if os.path.isdir(residual): residual_keep_list.append(residual)
-
+        print(residual_keep_list)
         # Find all models, masks and residuals which are not in zip/keep list
         # Do this by listing all and then checking against zip_list and keep_list
         # start with models
@@ -536,7 +536,9 @@ def get_continuum_intermediates(startdate=None, enddate=None,
         residual_del_list = glob.glob(os.path.join(beamdir, "continuum/residual_*_0[0-9]"))
         residual_del_list.sort()
         for residual in residual_del_list:
+            print(residual)
             if residual in residual_keep_list:
+                print("saving {}".format(residual))
                 residual_del_list.remove(residual)
 
         # join everything w/ zip & delete list
