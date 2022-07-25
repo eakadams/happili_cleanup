@@ -118,6 +118,104 @@ def get_obsid_beam_dir(obsid, beam, mode='happili-01'):
     return obsid_beam_dir
 
 
+def get_cal_vis(startdate=None, enddate=None, mode='happili-01'):
+    """
+    Get calibrator visibilities
+
+    Optionally do this for a range of dates
+
+    Different mode for happili-01 vs happili-05
+
+    Parameters
+    ----------
+    startdate : str (optional)
+         Optional startdate in YYMMDD format
+    enddate : str (optional)
+         Optional enddate in YYMMDD format
+    mode : string
+        Running mode - happili-01 or happili-05
+        Default is happili-01
+
+    Returns
+    -------
+    cal_vis_list : list
+         List of all calibrator visibilities in date range
+    """
+
+    # first get obsid array
+    obsid_array = get_obsid_array(startdate=startdate, enddate=enddate)
+
+    # then get initial path for each beam / obsid combination
+    obs_beam_dir_list = []
+    for obsid in obsid_array:
+        for b in range(40):
+            obdir = get_obsid_beam_dir(obsid, b, mode=mode)
+            obs_beam_dir_list.append(obdir)
+
+    # then need to find selfcal directories
+    cal_vis_list = []
+    for beamdir in obs_beam_dir_list:
+        beam_cal_list = glob.glob(
+            os.path.join(beamdir, "raw/3C*MS"))
+        # need to sort into order
+        beam_cal_list.sort()
+        # and add to list
+        cal_vis_list = cal_vis_list + beam_cal_list
+
+    return cal_vis_list
+
+
+def delete_cal_vis(startdate=None, enddate=None, mode='happili-01',
+                   run=False, verbose=True):
+    """
+    Delete calibrator visibilities
+
+    Optionally do this for a range of dates
+
+    Different mode for happili-01 vs happili-05
+
+    Defaults to a verbose running, but not actually doing
+
+    Parameters
+    ----------
+    startdate : str (optional)
+         Optional startdate in YYMMDD format
+    enddate : str (optional)
+         Optional enddate in YYMMDD format
+    mode : string
+        Running mode - happili-01 or happili-05
+        Default is happili-01
+    run : Boolean
+        Actually run and do deletion?
+        Default is False
+    verbose : Boolean
+        Print a record of what is (to be) deleted?
+        Default is True
+    """
+    # first get directories for deletion
+
+    cal_vis_list = get_scal_intermediate_dirs(startdate=startdate,
+                                              enddate=enddate,
+                                              mode=mode)
+
+    # then iterate through each directory
+    # print statement and delete, as set by flags
+    for cvis in cal_vis_list:
+        if run is True:
+            # do a try/except
+            # because may not have permission to delete data
+            try:
+                shutil.rmtree(cvis)
+                if verbose is True:
+                    print('Deleting {}'.format(cvis))
+            except:
+                if verbose is True:
+                    print('Unable to delete {}'.format(cvis))
+        else:
+            if verbose is True:
+                print('Practice run only; deleting {}'.format(cvis))
+
+
 def get_scal_intermediate_dirs(startdate=None, enddate=None,
                                mode='happili-01'):
     """
