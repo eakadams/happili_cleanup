@@ -497,6 +497,8 @@ def get_continuum_intermediates(startdate=None, enddate=None,
         beam_list = glob.glob(os.path.join(beamdir, "continuum/beam*"))
         # get all first dirty images (maps)
         map_list = glob.glob(os.path.join(beamdir, "continuum/map*"))
+        # get images that aren't fits
+        image_list = glob.glob(os.path.join(beamdir, "continuum/image_0[0-9]"))
         # Find NN to save; this if for mf plus chunks
         # do this by looking at the saved fits images
         fits_list = glob.glob(os.path.join(beamdir, "continuum/image_*fits"))
@@ -535,7 +537,7 @@ def get_continuum_intermediates(startdate=None, enddate=None,
 
         # join everything w/ zip & delete list
         zip_list = zip_list + mask_zip_list + model_zip_list
-        del_list = del_list + mask_del_list + model_del_list + residual_del_list
+        del_list = del_list + mask_del_list + model_del_list + residual_del_list + beam_list + map_list + image_list
 
     return zip_list, del_list
 
