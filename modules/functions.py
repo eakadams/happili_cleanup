@@ -529,6 +529,7 @@ def get_continuum_intermediates(startdate=None, enddate=None,
             if mask in mask_zip_list:
                 mask_del_list.remove(mask)
         # now residuals
+        print(residual_keep_list)
         residual_del_list = glob.glob(os.path.join(beamdir, "continuum/residual_*_0[0-9]"))
         residual_del_list.sort()
         for residual in residual_del_list:
