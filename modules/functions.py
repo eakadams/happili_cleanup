@@ -17,7 +17,6 @@ import numpy as np
 import os
 import glob
 import shutil
-import tarfile
 import re
 
 
@@ -332,20 +331,20 @@ def get_continuum_intermediates(startdate=None, enddate=None,
     return zip_list, del_list
 
 
-def delete_continuum_intermediates(startdate=None,enddate=None,
-                                  mode='happili-01',
-                                  run=False,
-                                  verbose=True):
+def cleanup_continuum_intermediates(startdate=None, enddate=None,
+                                    mode='happili-01',
+                                    run=False,
+                                    verbose=True):
     """
-    Delete the intermediate continuum files :: Copied from delete_intermediate_scal_dirs
+    Cleanup intermediate continuum files :: Copied from delete_intermediate_scal_dirs
 
     Optionally do this for a range of dates
-    Intermediate selfcal directories are everything in
-    /data/apertif/ObsID/BB/selfcal/00-0N, where N 
-    is the second to last major cycle of selfcal.
-    Thus, this keeps the
-    final major cycle of self-calibration
-    That will be cleaned up separately as the model should be saved
+    Intermediate continuum directories are in
+    /data/apertif/ObsID/BB/continuum
+
+    Files from the non-final cycle are deleted.
+    Those from the last cycle are saved, and zipped if they are models or masks
+    This is applied to mf images, in addition to chunk images.
 
     Different mode for happili-01 vs happili-05
 
@@ -367,92 +366,52 @@ def delete_continuum_intermediates(startdate=None,enddate=None,
         Print a record of what is (to be) deleted?
         Default is True
     """
-    #first get files for deletion
+    # first get files for deletion and zipping
     
-    tar_list, delete_list = get_continuum_intermediates(startdate=startdate,
-                                               enddate=enddate,
-                                               mode=mode)
+    zip_list, del_list = get_continuum_intermediates(startdate=startdate, enddate=enddate,
+                                                     mode=mode)
 
-    #then iterate through each file
-    #print statement and delete, as set by flags
-    for scdir in delete_list:
+    # then iterate through each file
+    # print statement and delete, as set by flags
+    for contdir in del_list:
         if run is True:
-            #do a try/except
-            #because may not have permisison to delete data
+            # do a try/except
+            # because may not have permission to delete data
             try:
-                os.rm(scdir)
+                os.rm(contdir)
                 if verbose is True:
-                    print('Deleting {}'.format(scdir))
+                    print('Deleting {}'.format(contdir))
             except:
                 if verbose is True:
-                    print('Unable to delete {}'.format(scdir))
+                    print('Unable to delete {}'.format(contdir))
         else:
             if verbose is True:
-                print('Practice run only; deleting {}'.format(scdir))
+                print('Practice run only; deleting {}'.format(contdir))
 
-    #tar the files
-    # Below to keep track of tar file directories
-    tar_dir = None
-
-    #print statement and delete, as set by flags
-    for scdir in tar_list:
+    # zip the directories to keep
+    for contdir in zip_list:
         if run is True:
-            # As we need to write the correct files to the correct directories we will use the parent directory name to open the tar files
-            parent_dir = os.path.abspath(os.path.join(scdir, '..'))
-            if parent_dir != tar_dir:
-                # The intent of this if statement is to assure we are operating in the correct file path
-                tar_dir = parent_dir
-                if 'tar_handle' in locals():
-                    tar_handle.close()
-                # Check that the tar file does not exists
-                if not os.path.isfile(os.path.join(tar_dir, 'mask_models.tar')):
-                    tar_handle = tarfile.open(os.path.join(tar_dir, 'mask_models.tar'), "w:gz") # TODO: Check if we want to use gz or not
-                else:
-                    print("Tar file exists behavior here is not specified yet")
-                    print("Ideally untar file add all new files and then retar")
-                    print("This was not implemented as this usage should not be required and it should be double checked wheter the files are already tared")
-                    print("The content of tar list is:")
-                    print(tar_list)
-                    print("tar_list will be emptied to avoid deleting data")
-                    tar_list = []
-                    print("The content of tar list is now:")
-                    print(tar_list)
-                    break
-                    
-
-            # Now we try to add the file to the tar file in a try except clause, so that files can be poped from the lsit in case they cant be addded
+            # do a try/except
+            # because of permission issues on happili
             try:
-                tar_handle.add(scdir)
+                shutil.make_archive(contdir, 'gztar', contdir)
                 if verbose is True:
-                    print('Tarring {}'.format(scdir))
+                    print('gztar for {}'.format(contdir))
             except:
                 if verbose is True:
-                    print('Unable to delete {}'.format(scdir))
-                # Remove file from list to make sure it doesnt get deleted
-                tar_list.remove(scdir)
+                    print('Unable to gztar file {}'.format(contdir))
+            # then clean up files if they are zipped/tarred
+            if os.path.exists(contdir+'.tar.gz'):
+                try:
+                    os.rm(contdir)
+                    print('gztar file exists, clean up original directory {}'.format(contdir))
+                except:
+                    if verbose is True:
+                        print('gztar file exists but unable to clean up original directory {}'.format(contdir))
         else:
             if verbose is True:
-                parent_dir = os.path.abspath(os.path.join(scdir, '..'))
-                if parent_dir != tar_dir:
-                    # The intent of this if statement is to assure we are operating in the correct file path
-                    tar_dir = parent_dir
-                print('Practice run only; tarring {} into {}'.format(scdir, tar_dir))
+                print('practice run only; gztar and then try to clean up {}'.format(contdir))
 
 
-    #delete files successfully added to their respective tar files
-    #print statement and delete, as set by flags
-    for scdir in tar_list:
-        if run is True:
-            #do a try/except
-            #because may not have permisison to delete data
-            try:
-                os.rm(scdir)
-                if verbose is True:
-                    print('Deleting {}'.format(scdir))
-            except:
-                if verbose is True:
-                    print('Unable to delete {}'.format(scdir))
-        else:
-            if verbose is True:
-                print('Practice run only; deleting {}'.format(scdir))
+
 
