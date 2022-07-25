@@ -194,9 +194,7 @@ def delete_cal_vis(startdate=None, enddate=None, mode='happili-01',
     """
     # first get directories for deletion
 
-    cal_vis_list = get_scal_intermediate_dirs(startdate=startdate,
-                                              enddate=enddate,
-                                              mode=mode)
+    cal_vis_list = get_cal_vis(startdate=startdate, enddate=enddate, mode=mode)
 
     # then iterate through each directory
     # print statement and delete, as set by flags
