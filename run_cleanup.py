@@ -48,7 +48,7 @@ if args.scal_inter is True:
                                   verbose=args.verbose)
     final_scal_cleanup(startdate=args.startdate, enddate=args.enddate, mode=args.mode,
                        run=args.run, verbose=args.verbose)
-if args.cont_iter is True:
+if args.cont_inter is True:
     cleanup_continuum_intermediates(startdate=args.startdate,
                                     enddate=args.enddate,
                                     mode=args.mode,
