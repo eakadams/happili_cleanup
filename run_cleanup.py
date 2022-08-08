@@ -26,6 +26,10 @@ parser.add_argument("--enddate", help='End date, YYMMDD',
                     type=str, default=None)
 parser.add_argument("--scal_inter", default=True, type=bool,
                     help='Clean up intermediate selfcal files')
+parser.add_argument("--cont_inter", default=True, type=bool,
+                    help='Clean up intermediate continuum files')
+parser.add_argument("--cal_vis", default=True, type=bool,
+                    help='Clean up calibrator visibilities')
 parser.add_argument("--mode", default='happili-01', type=str,
                     help='Running on happili-01 or happili-05')
 parser.add_argument("--verbose", default=True, type=bool,
@@ -42,14 +46,17 @@ if args.scal_inter is True:
                                   mode=args.mode,
                                   run=args.run,
                                   verbose=args.verbose)
+    final_scal_cleanup(startdate=args.startdate, enddate=args.enddate, mode=args.mode,
+                       run=args.run, verbose=args.verbose)
+if args.cont_iter is True:
     cleanup_continuum_intermediates(startdate=args.startdate,
                                     enddate=args.enddate,
                                     mode=args.mode,
                                     run=args.run,
                                     verbose=args.verbose)
+if args.cal_vis is True:
     delete_cal_vis(startdate=args.startdate, enddate=args.enddate, mode=args.mode,
                    run=args.run, verbose=args.verbose)
-    final_scal_cleanup(startdate=args.startdate, enddate=args.enddate, mode=args.mode,
-                       run=args.run, verbose=args.verbose)
+
 
 
