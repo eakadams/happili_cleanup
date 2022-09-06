@@ -372,12 +372,6 @@ def final_scal_cleanup(startdate=None, enddate=None,
         # skip if already run
         pm_scal = os.path.join(beamdir, "selfcal/pm")
         if os.path.isdir(pm_scal):
-            major_selfcal_list = glob.glob(
-                os.path.join(beamdir, "selfcal/0[0-9]"))
-            # need to sort into order
-            major_selfcal_list.sort()
-            last_scal = major_selfcal_list[-1]
-            amp_scal = os.path.join(beamdir, "selfcal/amp")
             # first delete parametric; easiest
             if run is True:
                 try:
@@ -391,54 +385,66 @@ def final_scal_cleanup(startdate=None, enddate=None,
                 if verbose is True:
                     print('Practice run only; deleting {}'.format(pm_scal))
             # then do last major cycle
-            major_models = glob.glob(os.path.join(last_scal, 'model_*'))
-            major_models.sort()
-            last_model = major_models[-1]
-            last_scal_contents = glob.glob(last_scal + "/*")
-            amp_models = glob.glob(os.path.join(amp_scal, 'model_*'))
-            amp_models.sort()
-            last_amp_model = amp_models[-1]
-            last_amp_contents = glob.glob(amp_scal+"/*")
-            if run is True:
-                try:
-                    # gztar phse model
-                    shutil.make_archive(last_model, 'gztar', last_model)
+            major_selfcal_list = glob.glob(
+                os.path.join(beamdir, "selfcal/0[0-9]"))
+            # need to sort into order
+            major_selfcal_list.sort()
+            # and check that directories exist (could fail after pm)
+            if len(major_selfcal_list) >= 1:
+                last_scal = major_selfcal_list[-1]
+                major_models = glob.glob(os.path.join(last_scal, 'model_*'))
+                major_models.sort()
+                last_model = major_models[-1]
+                last_scal_contents = glob.glob(last_scal + "/*")
+                if run is True:
+                    try:
+                        # gztar phse model
+                        shutil.make_archive(last_model, 'gztar', last_model)
+                        if verbose is True:
+                            print('gztar last phase selfcal model, {}'.format(last_model))
+                        # then clean up
+                        for scdir in last_scal_contents:
+                            try:
+                                shutil.rmtree(scdir)
+                                if verbose is True:
+                                    print('Deleting {}'.format(scdir))
+                            except:
+                                if verbose is True:
+                                    print('Unable to delete {}'.format(scdir))
+                    except:
+                        if verbose is True:
+                            print('Unable to gztar last phase selfcal model, {}'.format(last_model))
+                else:
                     if verbose is True:
-                        print('gztar last phase selfcal model, {}'.format(last_model))
-                    # then clean up
-                    for scdir in last_scal_contents:
-                        try:
-                            shutil.rmtree(scdir)
-                            if verbose is True:
-                                print('Deleting {}'.format(scdir))
-                        except:
-                            if verbose is True:
-                                print('Unable to delete {}'.format(scdir))
-                except:
-                    if verbose is True:
-                        print('Unable to gztar last phase selfcal model, {}'.format(last_model))
-                try:
-                    # gztar amp
-                    shutil.make_archive(last_amp_model, 'gztar', last_amp_model)
-                    if verbose is True:
-                        print('gztar last amp selfcal model, {}'.format(last_amp_model))
-                    # then clean up
-                    for scdir in last_amp_contents:
-                        try:
-                            shutil.rmtree(scdir)
-                            if verbose is True:
-                                print('Deleting {}'.format(scdir))
-                        except:
-                            if verbose is True:
-                                print('Unable to delete {}'.format(scdir))
-                except:
-                    if verbose is True:
-                        print('Unable to gztar last amp selfcal model, {}'.format(last_amp_model))
-            else:
-                if verbose is True:
-                    print('Practice run only; gztar last phase selfcal model, {}'.format(last_model))
-                    for scdir in last_scal_contents:
-                        print('Practice run only; deleting {}'.format(scdir))
+                        print('Practice run only; gztar last phase selfcal model, {}'.format(last_model))
+                        for scdir in last_scal_contents:
+                            print('Practice run only; deleting {}'.format(scdir))
+            # then amplitude
+            amp_scal = os.path.join(beamdir, "selfcal/amp")
+            if os.path.isdir(amp_scal):
+                amp_models = glob.glob(os.path.join(amp_scal, 'model_*'))
+                amp_models.sort()
+                last_amp_model = amp_models[-1]
+                last_amp_contents = glob.glob(amp_scal+"/*")
+                if run is True:
+                    try:
+                        # gztar amp
+                        shutil.make_archive(last_amp_model, 'gztar', last_amp_model)
+                        if verbose is True:
+                            print('gztar last amp selfcal model, {}'.format(last_amp_model))
+                        # then clean up
+                        for scdir in last_amp_contents:
+                            try:
+                                shutil.rmtree(scdir)
+                                if verbose is True:
+                                    print('Deleting {}'.format(scdir))
+                            except:
+                                if verbose is True:
+                                    print('Unable to delete {}'.format(scdir))
+                    except:
+                        if verbose is True:
+                            print('Unable to gztar last amp selfcal model, {}'.format(last_amp_model))
+                else:
                     print('Practice run only; gztar last amp selfcal model, {}'.format(last_amp_model))
                     for scdir in last_amp_contents:
                         print('Practice run only; deleting {}'.format(scdir))
