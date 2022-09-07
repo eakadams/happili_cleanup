@@ -394,9 +394,13 @@ def final_scal_cleanup(startdate=None, enddate=None,
                 last_scal = major_selfcal_list[-1]
                 major_models = glob.glob(os.path.join(last_scal, 'model_*'))
                 major_models.sort()
-                last_model = major_models[-1]
+                # check for case that cycle started but no model produced
+                if len(major_models) >= 1:
+                    last_model = major_models[-1]
+                else:
+                    last_model = None
                 last_scal_contents = glob.glob(last_scal + "/*")
-                if run is True:
+                if (run is True) and (last_model is not None):
                     try:
                         # gztar phse model
                         shutil.make_archive(last_model, 'gztar', last_model)
@@ -414,7 +418,7 @@ def final_scal_cleanup(startdate=None, enddate=None,
                     except:
                         if verbose is True:
                             print('Unable to gztar last phase selfcal model, {}'.format(last_model))
-                else:
+                elif last_model is not None:
                     if verbose is True:
                         print('Practice run only; gztar last phase selfcal model, {}'.format(last_model))
                         for scdir in last_scal_contents:

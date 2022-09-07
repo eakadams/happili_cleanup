@@ -7,6 +7,18 @@ September 2022: Have expanded for
 - Keep final continuum images and residuals, compress masks and models
 - Remove calibrator vis (previously done manually)
 
+NOTE! This can take a while to run, so best to do in a screen.
+
+Current data usage (7 Sep 2022):
+- tank1: 25T / 98%
+- tank2: 25T / 98%
+- tank3: 25T / 98%
+- tank4: 25T / 97%
+- data1: 31T / 93%
+- data2: 30T / 92%
+- data3: 31T / 95%
+- data4: 31T / 93%
+
 Data usage before expanded cleanup (6 Sep 2022):
 - tank1: 26T / 100%
 - tank2: 26T / 100%
@@ -17,8 +29,8 @@ Data usage before expanded cleanup (6 Sep 2022):
 - data3: 31T / 95%
 - data4: 31T / 93%
 
-Start cleanup, run on taskids:
-190722001
-
+Start cleanup, run on dates:
+190701 - 190731
+190801 - 190831
 
 Failed to run on taskids:
