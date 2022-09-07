@@ -400,12 +400,13 @@ def final_scal_cleanup(startdate=None, enddate=None,
                 else:
                     last_model = None
                 last_scal_contents = glob.glob(last_scal + "/*")
-                if (run is True) and (last_model is not None):
+                if run is True:
                     try:
                         # gztar phse model
-                        shutil.make_archive(last_model, 'gztar', last_model)
-                        if verbose is True:
-                            print('gztar last phase selfcal model, {}'.format(last_model))
+                        if last_model is not None:
+                            shutil.make_archive(last_model, 'gztar', last_model)
+                            if verbose is True:
+                                print('gztar last phase selfcal model, {}'.format(last_model))
                         # then clean up
                         for scdir in last_scal_contents:
                             try:
@@ -418,9 +419,10 @@ def final_scal_cleanup(startdate=None, enddate=None,
                     except:
                         if verbose is True:
                             print('Unable to gztar last phase selfcal model, {}'.format(last_model))
-                elif last_model is not None:
+                else:
                     if verbose is True:
-                        print('Practice run only; gztar last phase selfcal model, {}'.format(last_model))
+                        if last_model is not None:
+                            print('Practice run only; gztar last phase selfcal model, {}'.format(last_model))
                         for scdir in last_scal_contents:
                             print('Practice run only; deleting {}'.format(scdir))
             # then amplitude
