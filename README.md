@@ -9,7 +9,7 @@ September 2022: Have expanded for
 
 NOTE! This can take a while to run, so best to do in a screen.
 
-Current data usage (7 Sep 2022):
+Current data usage (8 Sep 2022):
 - tank1: 25T / 97%
 - tank2: 25T / 97%
 - tank3: 25T / 97%
@@ -30,7 +30,9 @@ Data usage before expanded cleanup (6 Sep 2022):
 - data4: 31T / 93%
 
 Start cleanup, run on dates:
-190701 - 190731
-190801 - 190831
+- 190701 - 190731
+- 190801 - 190831
+- 190906
+- 190907 - 190930
 
 Failed to run on taskids:
