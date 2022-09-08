@@ -10,14 +10,14 @@ September 2022: Have expanded for
 NOTE! This can take a while to run, so best to do in a screen.
 
 Current data usage (7 Sep 2022):
-- tank1: 25T / 98%
-- tank2: 25T / 98%
-- tank3: 25T / 98%
-- tank4: 25T / 97%
-- data1: 31T / 93%
-- data2: 30T / 92%
-- data3: 31T / 95%
-- data4: 31T / 93%
+- tank1: 25T / 97%
+- tank2: 25T / 97%
+- tank3: 25T / 97%
+- tank4: 25T / 96%
+- data1: 30T / 92%
+- data2: 31T / 94%
+- data3: 30T / 92%
+- data4: 32T / 95%
 
 Data usage before expanded cleanup (6 Sep 2022):
 - tank1: 26T / 100%
