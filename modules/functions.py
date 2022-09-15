@@ -508,7 +508,7 @@ def get_continuum_intermediates(startdate=None, enddate=None,
     del_list = []
     zip_list = []
     for beamdir in obs_beam_dir_list:
-        print(beamdir)
+        # print(beamdir)
         # get all dirty beams
         beam_list = glob.glob(os.path.join(beamdir, "continuum/beam*_0[0-9]"))
         # get all first dirty images (maps)
