@@ -39,3 +39,6 @@ Start cleanup, run on dates:
 - 200701 - 201231 
 
 Failed to run on taskids:
+- 200406054
+- 200427042
+- 200603135 - 200822088 (~33 observations with no group write permission)
