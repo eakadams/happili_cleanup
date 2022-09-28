@@ -38,7 +38,13 @@ Start cleanup, run on dates:
 - 200101 - 200630 
 - 200701 - 201231 
 
-Failed to run on taskids:
+Failed to run on taskids (think these are files in apercal group; asked to be added to that group):
 - 200406054
 - 200427042
-- 200603135 - 200822088 (~33 observations with no group write permission)
+- 210229084
+- 200622045 - 200624213
+- 200929094
+- 200930045
+- 200912042
+- 200913041
+- 201029084
