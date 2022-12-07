@@ -9,15 +9,15 @@ September 2022: Have expanded for
 
 NOTE! This can take a while to run, so best to do in a screen.
 
-Current data usage (15 Sep 2022, 14:35):
-- tank1: 18T / 69%
-- tank2: 18T / 70%
-- tank3: 19T / 71%
-- tank4: 18T / 71%
-- data1: 30T / 89%
-- data2: 30T / 92%
-- data3: 29T / 87%
-- data4: 28T / 85%
+Current data usage (7 Dec 2022, 14:35):
+- tank1: 16T / 60%
+- tank2: 16T / 61%
+- tank3: 16T / 62%
+- tank4: 16T / 61%
+- data1: 31T / 95%
+- data2: 31T / 95%
+- data3: 32T / 95%
+- data4: 30T / 91%
 
 Data usage before expanded cleanup (6 Sep 2022):
 - tank1: 26T / 100%
@@ -39,12 +39,10 @@ Start cleanup, run on dates:
 - 200701 - 201231 
 
 Failed to run on taskids (think these are files in apercal group; asked to be added to that group):
-- 200406054
-- 200427042
 - 210229084
-- 200622045 - 200624213
-- 200929094
-- 200930045
-- 200912042
-- 200913041
-- 201029084
+
+
+
+
+
+
