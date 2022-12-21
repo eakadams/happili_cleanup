@@ -37,9 +37,11 @@ Start cleanup, run on dates:
 - 191001 - 191231 
 - 200101 - 200630 
 - 200701 - 201231 
+- 210101 - 210131
+- 210201 - 210228
 
 Failed to run on taskids (think these are files in apercal group; asked to be added to that group):
-- 210229084
+- 210229084 (?? - not an actual date!)
 
 
 
